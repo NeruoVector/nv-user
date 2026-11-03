@@ -1,4 +1,4 @@
-export const BASE_URL = (process.env.EXPO_PUBLIC_BACKEND_BASE_URL || 'https://neurovector-backend.forge-lang.org').replace(/\/$/, '');
+export const BASE_URL = (import.meta.env?.VITE_BACKEND_BASE_URL || '').replace(/\/$/, '');
 
 export type Item = { id: string; sku: string; name: string; description: string | null; unit_price: number; currency: string; stock_quantity: number; active: boolean };
 export type OrderItem = { item_id: string; quantity: number; unit_price: number; line_total: number };

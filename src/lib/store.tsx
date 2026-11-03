@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api, Item } from './api';
 
@@ -16,8 +15,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const refresh = async () => { try { setError(''); setItems(await api.items()); } catch (e) { setError(e instanceof Error ? e.message : '상품을 불러오지 못했어요.'); } finally { setLoading(false); } };
-  useEffect(() => { AsyncStorage.getItem('nv-profile').then(v => { if (v) update({ ...initial, ...JSON.parse(v) }); }).catch(() => {}).finally(() => setReady(true)); Promise.resolve().then(refresh); }, []);
-  useEffect(() => { if (ready) AsyncStorage.setItem('nv-profile', JSON.stringify(profile)).catch(() => {}); }, [profile, ready]);
+  useEffect(() => { Promise.resolve().then(() => localStorage.getItem('nv-profile')).then(v => { if (v) update({ ...initial, ...JSON.parse(v) }); }).catch(() => {}).finally(() => setReady(true)); Promise.resolve().then(refresh); }, []);
+  useEffect(() => { if (ready) { try { localStorage.setItem('nv-profile', JSON.stringify(profile)); } catch { /* 저장 공간 부족 또는 브라우저 정책 */ } } }, [profile, ready]);
   const setProfile = (p: Partial<Profile>) => update(prev => ({ ...prev, ...p }));
   const add = (item: Item, quantity = 1) => setCart(prev => { const existing = prev.find(x => x.item.id === item.id); return existing ? prev.map(x => x.item.id === item.id ? { ...x, quantity: x.quantity + quantity } : x) : [...prev, { item, quantity }]; });
   const change = (id: string, delta: number) => setCart(prev => prev.map(x => x.item.id === id ? { ...x, quantity: x.quantity + delta } : x).filter(x => x.quantity > 0));

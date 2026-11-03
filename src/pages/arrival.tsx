@@ -1,0 +1,4 @@
+import { useAppRouter, useAppParams } from '@/lib/navigation';
+import { Button, C, Card, Screen, Txt } from '@/components/ui/app';
+import { useStore } from '@/lib/store';
+export default function Arrival(){ const router = useAppRouter();const {id}=useAppParams<{id:string}>();const {profile}=useStore();return <Screen title="도착 안내" back><Txt style={{color:C.red,fontWeight:'700'}}>수령 준비</Txt><Txt style={{fontSize:27,fontWeight:'800',lineHeight: '37px'}}>간식이 곧 도착해요.{ '\n' }이제 나와주세요!</Txt><Card style={{backgroundColor:C.pale,borderColor:C.pale}}><Txt style={{fontWeight:'800',fontSize:20}}>{profile.place}</Txt><Txt>도착하면 주문번호를 확인해 주세요.</Txt></Card><Txt muted>다른 사람의 간식과 바뀌지 않도록 주문번호와 메뉴를 확인해 주세요.</Txt><Button title="수령 번호 확인하기" onClick={()=>router.push({pathname:'/pickup',params:{id}})}/></Screen>}

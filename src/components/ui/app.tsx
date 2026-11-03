@@ -1,17 +1,62 @@
-import { router, usePathname } from 'expo-router';
-import { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useId, type CSSProperties, type ReactNode, type KeyboardEvent } from 'react'
+import { NavLink } from 'react-router-dom'
+import { useAppRouter } from '@/lib/navigation'
 
-export const C = { bg: '#FAF7F2', ink: '#292524', muted: '#78716C', red: '#C21F3A', pale: '#FBE9ED', line: '#EAE3DC', white: '#FFFFFF', blue: '#879498' };
-export function Txt({ children, style, muted }: { children: ReactNode; style?: object; muted?: boolean }) { return <Text style={[s.text, muted && { color: C.muted }, style]}>{children}</Text>; }
-export function Screen({ title, children, back = false, tabs = false, footer }: { title?: string; children: ReactNode; back?: boolean; tabs?: boolean; footer?: ReactNode }) { return <SafeAreaView style={s.safe}><View style={s.frame}>{title && <View style={s.header}>{back && <Pressable onPress={() => router.back()} style={s.back}><Txt style={{ fontSize: 26 }}>‹</Txt></Pressable>}<Txt style={s.title}>{title}</Txt></View>}<ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled">{children}</ScrollView>{footer}<BottomTabs visible={tabs}/></View></SafeAreaView>; }
-export function Button({ title, onPress, secondary = false, disabled = false, style }: { title: string; onPress: () => void; secondary?: boolean; disabled?: boolean; style?: object }) { return <Pressable disabled={disabled} onPress={onPress} style={[s.button, secondary && s.secondary, disabled && { opacity: .45 }, style]}><Txt style={{ color: secondary ? C.ink : C.white, fontWeight: '700', textAlign: 'center' }}>{title}</Txt></Pressable>; }
-export function Field({ label, value, onChangeText, placeholder, keyboardType, multiline, secureTextEntry }: { label: string; value: string; onChangeText: (v: string) => void; placeholder?: string; keyboardType?: 'phone-pad' | 'number-pad' | 'default'; multiline?: boolean; secureTextEntry?: boolean }) { return <View style={{ gap: 8 }}><Txt style={s.label}>{label}</Txt><TextInput style={[s.input, multiline && { minHeight: 100, textAlignVertical: 'top' }]} value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor="#A29B95" keyboardType={keyboardType} multiline={multiline} secureTextEntry={secureTextEntry}/></View>; }
-export function Card({ children, onPress, style }: { children: ReactNode; onPress?: () => void; style?: object }) { const content=<View style={[s.card, style]}>{children}</View>; return onPress ? <Pressable onPress={onPress}>{content}</Pressable> : content; }
-export function Row({ children, style }: { children: ReactNode; style?: object }) { return <View style={[s.row, style]}>{children}</View>; }
-export function Divider() { return <View style={{ height: 1, backgroundColor: C.line, marginVertical: 5 }}/>; }
-export function Notice({ text, retry }: { text: string; retry?: () => void }) { return <Card><Txt muted>{text}</Txt>{retry && <Button title="다시 시도" secondary onPress={retry}/>}</Card>; }
-export function Spinner() { return <ActivityIndicator color={C.red} style={{ margin: 32 }}/>; }
-export function BottomTabs({ visible }: { visible: boolean }) { const pathname=usePathname(); if (!visible) return null; return <View style={s.tabs}>{[['⌂','홈','/shop'],['▤','주문내역','/orders'],['▢','장바구니','/cart'],['♙','마이','/my']].map(([icon,label,path]) => <Pressable key={path} onPress={() => router.push(path as never)} style={s.tab}><Txt style={{ fontSize: 22, color: pathname===path?C.red:C.blue }}>{icon}</Txt><Txt style={{ fontSize: 11, color:pathname===path?C.red:C.muted }}>{label}</Txt></Pressable>)}</View>; }
-export const s = StyleSheet.create({ safe: { flex: 1, backgroundColor: C.bg }, frame: { flex: 1, width: '100%', maxWidth: 500, alignSelf: 'center', backgroundColor: C.bg }, body: { padding: 22, gap: 18, paddingBottom: 36 }, header: { minHeight: 58, backgroundColor: C.white, borderBottomWidth: 1, borderColor: C.line, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 50 }, title: { fontSize: 19, fontWeight: '700', color: C.ink }, back: { position: 'absolute', left: 20, top: 8, paddingHorizontal: 8 }, text: { fontSize: 14, lineHeight: 22, color: C.ink }, label: { fontSize: 13, fontWeight: '700' }, input: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 14, fontSize: 15, color: C.ink }, button: { backgroundColor: C.red, borderRadius: 8, minHeight: 50, padding: 13, justifyContent: 'center' }, secondary: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line }, card: { backgroundColor: C.white, borderRadius: 12, padding: 18, gap: 10, borderWidth: 1, borderColor: C.line }, row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }, tabs: { height: 67, backgroundColor: C.white, borderTopWidth: 1, borderColor: C.line, flexDirection: 'row' }, tab: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 1 } });
+export const C = { bg: '#FAF7F2', ink: '#292524', muted: '#78716C', red: '#C21F3A', pale: '#FBE9ED', line: '#EAE3DC', white: '#FFFFFF', blue: '#879498' }
+type ContentProps = { children: ReactNode; style?: CSSProperties }
+export function Txt({ children, style, muted }: ContentProps & { muted?: boolean }) {
+  return <span className={muted ? 'text muted' : 'text'} style={style}>{children}</span>
+}
+export function Screen({ title, children, back = false, tabs = false, footer }: {
+  title?: string; children: ReactNode; back?: boolean; tabs?: boolean; footer?: ReactNode
+}) {
+  const router = useAppRouter()
+  return <div className="app-frame">
+    {title && <header className="screen-header">
+      {back && <button className="back-button" aria-label="이전 화면" onClick={router.back}>‹</button>}
+      <h1>{title}</h1>
+    </header>}
+    <main className="screen-body">{children}</main>
+    {footer && <div className="screen-footer">{footer}</div>}
+    {tabs && <BottomTabs/>}
+  </div>
+}
+export function Button({ title, onClick, secondary = false, disabled = false, style }: {
+  title: string; onClick: () => void; secondary?: boolean; disabled?: boolean; style?: CSSProperties
+}) {
+  return <button type="button" className={`button ${secondary ? 'secondary' : ''}`} disabled={disabled} onClick={onClick} style={style}>{title}</button>
+}
+export function Field({ label, value, onValueChange, placeholder, keyboardType, multiline, secureTextEntry }: {
+  label: string; value: string; onValueChange: (v: string) => void; placeholder?: string
+  keyboardType?: 'phone-pad' | 'number-pad' | 'default'; multiline?: boolean; secureTextEntry?: boolean
+}) {
+  const id = useId()
+  return <div className="field"><label htmlFor={id}>{label}</label>{multiline
+    ? <textarea id={id} value={value} onChange={e => onValueChange(e.target.value)} placeholder={placeholder}/>
+    : <input id={id} type={secureTextEntry ? 'password' : keyboardType === 'phone-pad' ? 'tel' : 'text'}
+      inputMode={keyboardType === 'number-pad' ? 'numeric' : undefined} value={value}
+      onChange={e => onValueChange(e.target.value)} placeholder={placeholder}/>}
+  </div>
+}
+export function Card({ children, onClick, style }: ContentProps & { onClick?: () => void }) {
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick?.() }
+  }
+  return <div className={`card ${onClick ? 'clickable' : ''}`} style={style}
+    role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}
+    onClick={onClick} onKeyDown={onClick ? onKeyDown : undefined}>{children}</div>
+}
+export function Row({ children, style }: ContentProps) { return <div className="row" style={style}>{children}</div> }
+export function Divider() { return <hr className="divider"/> }
+export function Notice({ text, retry }: { text: string; retry?: () => void }) {
+  return <Card><p className="muted" role="status">{text}</p>{retry && <Button title="다시 시도" secondary onClick={retry}/>}</Card>
+}
+export function Spinner() { return <div className="spinner" role="status" aria-label="불러오는 중"/> }
+function BottomTabs() {
+  return <nav className="bottom-tabs" aria-label="주요 메뉴">{[
+    ['⌂','홈','/shop'],['▤','주문내역','/orders'],['▢','장바구니','/cart'],['♙','마이','/my'],
+  ].map(([icon,label,path]) => <NavLink key={path} to={path} className="tab">
+    <span aria-hidden="true" className="tab-icon">{icon}</span><span>{label}</span>
+  </NavLink>)}</nav>
+}

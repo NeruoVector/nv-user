@@ -1,7 +1,0 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { View } from 'react-native';
-import { Button, C, Card, Notice, Row, Screen, Txt } from '@/components/ui/app';
-import { ProductArt } from '@/components/product';
-import { useStore, won } from '@/lib/store';
-export default function ItemScreen() { const { id } = useLocalSearchParams<{ id: string }>(); const { items, add } = useStore(); const [quantity,setQuantity]=useState(1); const item=items.find(x=>x.id===id); if (!item) return <Screen title="메뉴 상세" back><Notice text="상품을 찾을 수 없어요."/></Screen>; return <Screen title="메뉴 상세" back footer={<View style={{padding:12,backgroundColor:C.white}}><Button title={`${won(item.unit_price*quantity)} 담기`} disabled={item.stock_quantity<quantity} onPress={()=>{add(item,quantity);router.push('/cart');}}/></View>}><ProductArt item={item} large/><Txt style={{color:C.red,fontWeight:'700'}}>매점 인기 메뉴</Txt><Txt style={{fontSize:26,fontWeight:'800'}}>{item.name}</Txt><Txt muted>{item.description || '선린인터넷고 매점 상품'}</Txt><Card><Row><Txt>기본 가격</Txt><Txt style={{fontWeight:'800'}}>{won(item.unit_price)}</Txt></Row></Card><Card><Row><Txt style={{fontWeight:'700'}}>수량</Txt><Row><Button title="−" secondary onPress={()=>setQuantity(Math.max(1,quantity-1))} style={{minHeight:35,paddingHorizontal:14}}/><Txt>{quantity}</Txt><Button title="+" secondary onPress={()=>setQuantity(Math.min(item.stock_quantity,quantity+1))} style={{minHeight:35,paddingHorizontal:14}}/></Row></Row></Card><Txt muted>재고 {item.stock_quantity}개</Txt></Screen>; }
