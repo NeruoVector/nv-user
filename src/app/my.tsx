@@ -1,0 +1,4 @@
+import { router } from 'expo-router';
+import { Button, C, Card, Row, Screen, Txt } from '@/components/ui/app';
+import { useStore } from '@/lib/store';
+export default function My(){const {profile}=useStore();return <Screen title="마이" tabs><Card style={{backgroundColor:C.pale,borderColor:C.pale}}><Txt style={{fontSize:23,fontWeight:'800'}}>{profile.name||'손님'}님</Txt><Txt muted>오늘도 맛있는 하루 보내세요</Txt><Txt>{profile.school||'학교 미등록'} · {profile.place}</Txt></Card>{[['주문 내역','/orders'],['내 리뷰','/reviews'],['결제수단 관리','/payment-methods'],['설정','/settings']].map(([label,path])=><Card key={label} onPress={()=>router.push(path as never)}><Row><Txt style={{fontWeight:'700'}}>{label}</Txt><Txt>›</Txt></Row></Card>)}<Button title="매점 둘러보기" secondary onPress={()=>router.push('/shop')}/></Screen>}

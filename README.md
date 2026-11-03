@@ -1,56 +1,37 @@
-# Welcome to your Expo app 👋
+# 교내 배달 사용자 앱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo SDK 58 기반 iOS, Android, 웹 앱입니다. [Figma 사용자 앱 시안](https://www.figma.com/design/5cG3AE9mvVh4PadWxF4P54/?node-id=132-2)의 가입, 매점 탐색, 주문, 배송, 마이 화면을 구현했습니다.
 
-## Get started
+## 실행
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Node.js 22.13 이상이 필요합니다.
 
 ```bash
-npm run reset-project
+npm install
+npm start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+앱은 기본적으로 `https://neurovector-backend.forge-lang.org`에 연결됩니다. 다른 서버를 쓰려면 `.env`에 다음 값을 설정하세요.
 
-### Other setup steps
+```env
+EXPO_PUBLIC_BACKEND_BASE_URL=https://neurovector-backend.forge-lang.org
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Expo Go 또는 웹에서 열 수 있습니다. 학교 연결에 쓰는 개발용 코드는 `123456`입니다.
 
-## Learn more
+## 백엔드 연동
 
-To learn more about developing your project with Expo, look at the following resources:
+- 재고 목록 및 상품: `GET /api/v1/inventory`
+- 주문 생성, 목록 및 상세: `/api/v1/orders`
+- 개발용 결제: `POST /api/v1/orders/{id}/payments`
+- 주문 상태: 상세 조회를 15초마다 갱신
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+백엔드에 없는 휴대폰 인증, 학교 코드 조회, 사용자 세션, 알림 발송, 리뷰, 결제수단 저장 API는 연결할 수 없습니다. 이름과 연락처, 학교와 장소, 알림 설정, 최근 리뷰는 이 기기에 저장됩니다. 수령 확인도 이 기기에서만 표시되며 서버 주문 상태는 배송 담당자가 변경합니다. 결제는 실제 카드 과금이 아닌 백엔드 개발용 결제입니다.
 
-## Join the community
+## 점검
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx expo lint
+npx tsc --noEmit
+npx expo export --platform web
+```

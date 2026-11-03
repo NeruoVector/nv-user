@@ -1,0 +1,6 @@
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { Pressable } from 'react-native';
+import { Button, Card, Field, Row, Screen, Txt } from '@/components/ui/app';
+import { useStore } from '@/lib/store';
+export default function Review(){const {id}=useLocalSearchParams<{id:string}>();const {setProfile}=useStore();const [rating,setRating]=useState(5);const [body,setBody]=useState('');return <Screen title="리뷰 작성" back><Card><Txt style={{fontWeight:'800'}}>선린인터넷고 매점</Txt><Txt muted>주문 {id?.slice(0,8)}</Txt></Card><Txt style={{fontSize:22,fontWeight:'800'}}>어떤 점이 좋았나요?</Txt><Row style={{justifyContent:'center'}}>{[1,2,3,4,5].map(n=><Pressable key={n} onPress={()=>setRating(n)}><Txt style={{fontSize:32,color:n<=rating?'#E7AB39':'#D9D0C7'}}>★</Txt></Pressable>)}</Row><Field label="리뷰" value={body} onChangeText={setBody} placeholder="맛과 배달 경험을 알려주세요" multiline/><Txt muted>{body.length} / 500 · 연락처 등 개인정보는 적지 말아주세요.</Txt><Button title="리뷰 등록하기" disabled={body.trim().length<5||body.length>500} onPress={()=>{setProfile({review:`${rating}점 · ${body.trim()}`});router.replace('/my');}}/><Txt muted>리뷰 API가 없어 이 기기에 저장됩니다.</Txt></Screen>}
