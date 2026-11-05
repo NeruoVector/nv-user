@@ -15,6 +15,6 @@ export default function Shop() {
     <Pressable onPress={() => router.push('/store')}><Card style={{ backgroundColor: C.pale, borderColor: C.pale }}><Txt style={{ color: C.red, fontWeight: '800', fontSize: 17 }}>선린인터넷고 매점  ›</Txt><Txt muted>지금 주문 가능 · 교내 배달</Txt></Card></Pressable>
     <Row style={{ justifyContent: 'flex-start' }}>{['전체','과자','젤리','음료'].map(x => <Pressable key={x} onPress={() => setFilter(x)} style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: x===filter ? C.red : C.white }}><Txt style={{ color: x===filter ? C.white : C.ink }}>{x}</Txt></Pressable>)}</Row>
     <Row><Txt style={{ fontSize: 18, fontWeight: '800' }}>매점 상품</Txt><Pressable onPress={refresh}><Txt style={{ color: C.red }}>새로고침</Txt></Pressable></Row>
-    {loading ? <Spinner/> : error ? <Notice text={error} retry={refresh}/> : shown.length === 0 ? <Notice text={items.length ? '이 분류에 상품이 없어요.' : '현재 판매 중인 상품이 없어요.'}/> : <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 20 }}>{shown.map(item => <ProductCard key={item.id} item={item}/>)}</View>}
+    {loading ? <Spinner/> : error ? <Notice text={error} retry={refresh}/> : shown.length === 0 ? <Notice text={items.length ? '이 분류에 상품이 없어요.' : '현재 판매 중인 상품이 없어요.'}/> : <View style={{ width: '100%' }}>{shown.map(item => <ProductCard key={item.id} item={item}/>)}</View>}
   </Screen>;
 }

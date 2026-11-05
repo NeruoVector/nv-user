@@ -3,8 +3,8 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api, Item } from './api';
 
 type CartLine = { item: Item; quantity: number };
-type Profile = { name: string; phone: string; school: string; place: string; agreed: boolean; review: string; notifications: boolean[] };
-const initial: Profile = { name: '', phone: '', school: '', place: '1층 현관', agreed: false, review: '', notifications: [true, true, false] };
+type Profile = { name: string; phone: string; school: string; place: string; agreed: boolean; notifications: boolean[] };
+const initial: Profile = { name: '', phone: '', school: '', place: '1층 현관', agreed: false, notifications: [true, true, false] };
 type Store = { ready: boolean; profile: Profile; setProfile: (p: Partial<Profile>) => void; cart: CartLine[]; add: (item: Item, quantity?: number) => void; change: (id: string, delta: number) => void; clear: () => void; items: Item[]; loading: boolean; error: string; refresh: () => Promise<void> };
 const Context = createContext<Store | null>(null);
 
