@@ -2,6 +2,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, View } from 'react-native';
 
+import { DroneLive } from '@/components/drone-live';
 import { Button, C, Card, Divider, Notice, Row, Screen, Spinner, Txt } from '@/components/ui/app';
 import { api, Order } from '@/lib/api';
 import { useStore, won } from '@/lib/store';
@@ -94,6 +95,7 @@ export default function OrderScreen() {
         </Txt>
       </Row>)}
     </Card>
+    {['assigned', 'in_transit', 'delivered'].includes(order.status) && <DroneLive />}
     <Card>
       <Txt style={{ fontWeight: '800' }}>주문 정보</Txt>
       <Divider />
