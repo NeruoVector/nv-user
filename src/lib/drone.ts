@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { absoluteUrl, api, StreamInfo } from './api';
 
@@ -7,8 +7,6 @@ export function useDroneFeed() {
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const locked = useRef(false);
-
   const load = useCallback(async () => {
     try {
       const listed = await api.streams();
@@ -16,13 +14,11 @@ export function useDroneFeed() {
       const next = chosen ? await api.stream(chosen.drone_id) : null;
       const recordings = await api.recordings(next?.drone_id);
       const latest = recordings[0];
-      if (locked.current) return;
       setStream(next);
       setRecordingUrl(latest ? absoluteUrl(latest.download_url) : null);
       setError('');
-      if (next?.active) locked.current = true;
     } catch (e) {
-      if (!locked.current) setError(e instanceof Error ? e.message : '드론 상태를 불러오지 못했어요.');
+      setError(e instanceof Error ? e.message : '드론 상태를 불러오지 못했어요.');
     } finally {
       setLoading(false);
     }
@@ -35,7 +31,6 @@ export function useDroneFeed() {
   }, [load]);
 
   const reload = useCallback(() => {
-    locked.current = false;
     setLoading(true);
     return load();
   }, [load]);

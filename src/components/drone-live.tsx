@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { useDroneFeed } from '@/lib/drone';
-import { C, Card, Notice, Row, Spinner, Txt } from './ui/app';
+import { Button, C, Card, Notice, Row, Spinner, Txt } from './ui/app';
 import { DronePlayer } from './drone-player';
 
 export function DroneLive() {
@@ -21,6 +21,7 @@ export function DroneLive() {
       {feed.loading ? <Spinner /> : showLive ? <DronePlayer mode="whep" source={feed.stream!.webrtc_whep_path} onFail={() => setLiveFailed(true)} /> : showFile ? <DronePlayer mode="file" source={feed.recordingUrl!} /> : <Txt style={{ color: '#fff', padding: 16 }}>송출 중인 드론 영상이 없어요.</Txt>}
     </View>
     {liveFailed && feed.recordingUrl ? <Txt muted>실시간 연결에 실패해 최근 녹화를 보여 드려요.</Txt> : null}
+    {liveFailed ? <Button title="실시간 영상 다시 연결" secondary onPress={() => { setLiveFailed(false); void feed.reload(); }} /> : null}
     {feed.error ? <Notice text={feed.error} retry={() => { setLiveFailed(false); void feed.reload(); }} /> : null}
   </Card>;
 }

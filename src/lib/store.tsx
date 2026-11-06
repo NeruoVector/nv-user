@@ -19,8 +19,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { AsyncStorage.getItem('nv-profile').then(v => { if (v) update({ ...initial, ...JSON.parse(v) }); }).catch(() => {}).finally(() => setReady(true)); Promise.resolve().then(refresh); }, []);
   useEffect(() => { if (ready) AsyncStorage.setItem('nv-profile', JSON.stringify(profile)).catch(() => {}); }, [profile, ready]);
   const setProfile = (p: Partial<Profile>) => update(prev => ({ ...prev, ...p }));
-  const add = (item: Item, quantity = 1) => setCart(prev => { const existing = prev.find(x => x.item.id === item.id); return existing ? prev.map(x => x.item.id === item.id ? { ...x, quantity: x.quantity + quantity } : x) : [...prev, { item, quantity }]; });
-  const change = (id: string, delta: number) => setCart(prev => prev.map(x => x.item.id === id ? { ...x, quantity: x.quantity + delta } : x).filter(x => x.quantity > 0));
+  const add = (item: Item, quantity = 1) => setCart(prev => { const existing = prev.find(x => x.item.id === item.id); const next = Math.min(item.stock_quantity, (existing?.quantity ?? 0) + quantity); return existing ? prev.map(x => x.item.id === item.id ? { ...x, item, quantity: next } : x).filter(x => x.quantity > 0) : next > 0 ? [...prev, { item, quantity: next }] : prev; });
+  const change = (id: string, delta: number) => setCart(prev => prev.map(x => x.item.id === id ? { ...x, quantity: Math.min(x.item.stock_quantity, x.quantity + delta) } : x).filter(x => x.quantity > 0));
   const value = useMemo(() => ({ ready, profile, setProfile, cart, add, change, clear: () => setCart([]), items, loading, error, refresh }), [ready, profile, cart, items, loading, error]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

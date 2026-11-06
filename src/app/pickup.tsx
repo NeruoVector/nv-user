@@ -41,8 +41,8 @@ export default function Pickup() {
     {error ? <Notice text={error} retry={load} /> : !order ? <Spinner /> : <>
       <Txt muted>{order.delivery_detail || order.delivery_address}에서 주문한 간식을 받아주세요.</Txt>
       <Card style={{ alignItems: 'center', backgroundColor: C.pale, borderColor: C.pale }}>
-        <Txt muted>내 주문번호</Txt>
-        <Txt style={{ fontSize: 24, fontWeight: '800', color: C.red }}>{order.order_number}</Txt>
+        <Txt muted>내 수령번호</Txt>
+        <Txt style={{ fontSize: 24, fontWeight: '800', color: C.red }}>{order.pickup_code || '준비 중'}</Txt>
       </Card>
       <Card>
         <Txt>1. 주문한 메뉴와 수량을 확인해 주세요.</Txt>

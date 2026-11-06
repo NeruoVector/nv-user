@@ -1,10 +1,11 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 
 import { DroneLive } from '@/components/drone-live';
 import { Button, C, Card, Divider, Notice, Row, Screen, Spinner, Txt } from '@/components/ui/app';
 import { api, Order } from '@/lib/api';
+import { confirmAction } from '@/lib/dialog';
 import { useStore, won } from '@/lib/store';
 import { statusText } from '../orders';
 
@@ -50,29 +51,27 @@ export default function OrderScreen() {
     }
   };
 
-  const cancel = () => Alert.alert(
+  const cancel = () => confirmAction(
     '주문을 취소할까요?',
     '주문을 취소하고 결제된 금액이 있으면 환불합니다.',
-    [
-      { text: '계속 주문하기', style: 'cancel' },
-      { text: '주문 취소', style: 'destructive', onPress: async () => {
-        setBusy(true);
-        setActionError('');
-        try {
-          const cancelled = await api.cancelOrder(id);
-          setOrder({ ...order!, ...cancelled });
-          if (order?.payment?.status === 'captured') {
-            await api.refund(order.payment.id);
-          }
-          await load();
-        } catch (e) {
-          setActionError(e instanceof Error ? e.message : '주문 취소 또는 환불에 실패했어요.');
-          await load();
-        } finally {
-          setBusy(false);
+    async () => {
+      setBusy(true);
+      setActionError('');
+      try {
+        const cancelled = await api.cancelOrder(id);
+        setOrder({ ...order!, ...cancelled });
+        if (order?.payment?.status === 'captured') {
+          await api.refund(order.payment.id);
         }
-      } },
-    ],
+        await load();
+      } catch (e) {
+        setActionError(e instanceof Error ? e.message : '주문 취소 또는 환불에 실패했어요.');
+        await load();
+      } finally {
+        setBusy(false);
+      }
+    },
+    '주문 취소',
   );
 
   if (loading) return <Screen title="배달 현황" back><Spinner /></Screen>;

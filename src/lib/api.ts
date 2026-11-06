@@ -2,7 +2,7 @@ export const BASE_URL = (process.env.EXPO_PUBLIC_BACKEND_BASE_URL || 'https://ne
 
 export type Item = { id: string; sku: string; name: string; description: string | null; unit_price: number; currency: string; stock_quantity: number; active: boolean };
 export type OrderItem = { item_id: string; quantity: number; unit_price: number; line_total: number };
-export type Order = { id: string; order_number: string; customer_name: string; customer_phone: string; status: string; total_amount: number; delivery_address: string; delivery_detail: string | null; notes: string | null; created_at: string; items?: OrderItem[]; payment?: Payment | null };
+export type Order = { id: string; order_number: string; customer_name: string; customer_phone: string; status: string; total_amount: number; delivery_address: string; delivery_detail: string | null; notes: string | null; created_at: string; items?: OrderItem[]; payment?: Payment | null; pickup_code?: string };
 export type Payment = { id: string; order_id: string; status: string; amount: number; method: string; failure_reason: string | null };
 export type Review = { id: string; order_id: string; rating: number; content: string; tags: string[]; has_photo: boolean; created_at: string };
 export type ReviewList = { items: Review[]; total: number; average_rating: number | null };
